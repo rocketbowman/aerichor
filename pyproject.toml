@@ -1,0 +1,26 @@
+[project]
+name = "aerichor"
+version = "0.1.0"
+authors = [
+    { name = "Kyle Bowman", email = "kyle+github@rocketbowman.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "cartopy>=0.24.1",
+    "matplotlib>=3.10.3",
+    "netcdf4>=1.7.2",
+    "numpy>=2.3.1",
+    "shapely>=2.1.1",
+    "xarray>=2025.7.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "pip>=25.1.1",
+    "pytest>=8.4.1",
+]

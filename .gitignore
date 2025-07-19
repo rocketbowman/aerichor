@@ -1,0 +1,12 @@
+# Python-generated cruft 
+**/__pycache__/**
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.pytest_cache
+
+# Development Environment Cruft
+.venv
+.vscode
