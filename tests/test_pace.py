@@ -5,22 +5,23 @@ from aerichor.satellite.pace import SPEXOne
 
 
 @pytest.fixture(scope="module")
-def swath():
-    swath = SPEXOne.from_netcdf("tests/data/PACE_SPEXONE.20240324T174414.L2.RTAP_LD.V3_0.nc")
-    return swath
+def spex():
+    spex = SPEXOne.from_netcdf("tests/data/PACE_SPEXONE.20240324T174414.L2.RTAP_LD.V3_0.nc")
+    return spex
 
-def test_base_repr_html_exists(swath):
-    assert swath._repr_html_()
+def test_base_repr_html_exists(spex):
+    assert spex._repr_html_()
 
-def test_base_item_methods(swath):
+def test_base_item_methods(spex):
     key="new"
     value="test"
-    swath[key]=value
-    assert swath[key] == value
-    del swath[key]
+    spex[key]=value
+    assert spex[key] == value
+    del spex[key]
     with pytest.raises(KeyError):
-        swath[key]
+        spex[key]
 
-def test_base_swath_contains(swath):
-    point=shapely.Point(-78.67, 35.75)
-    assert swath.swath.contains(point)
+def test_base_swath_contains(spex):
+    p = [-78.67, 35.75]
+    point=shapely.Point(p)
+    assert spex.swath.contains(point)
