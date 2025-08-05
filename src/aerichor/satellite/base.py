@@ -1,8 +1,8 @@
 from abc import abstractclassmethod
 
 from shapely import Polygon
-import numpy as np
-import xarray as xr
+
+from aerichor.utils import BoundingBox
 
 
 class Swath:
@@ -17,6 +17,7 @@ class Swath:
         self.start      = start
         self.end        = end
         self.swath      = self._get_swath()
+        self.bbox       = BoundingBox.from_shape(self.swath)
 
         if hasattr(self.data,"_repr_html_"):
             self._repr_html_ = self.data._repr_html_
