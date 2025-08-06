@@ -6,22 +6,30 @@ from aerichor.utils import BoundingBox
 
 
 class Swath:
+    def __init__(
+        self,
+        *,
+        data=None,
+        elevation=None,
+        lats=None,
+        lons=None,
+        origin=None,
+        start=None,
+        end=None,
+    ):
+        self.data = data
+        self.elevation = elevation
+        self.lats = lats
+        self.lons = lons
+        self.origin = origin
+        self.start = start
+        self.end = end
+        self.swath = self._get_swath()
+        self.bbox = BoundingBox.from_shape(self.swath)
 
-    def __init__(self, *, data=None, origin=None, elevation=None,
-                 lats=None, lons=None, start=None, end=None):
-        self.data       = data
-        self.lons       = lons
-        self.lats       = lats
-        self.elevation  = elevation
-        self.origin     = origin
-        self.start      = start
-        self.end        = end
-        self.swath      = self._get_swath()
-        self.bbox       = BoundingBox.from_shape(self.swath)
-
-        if hasattr(self.data,"_repr_html_"):
+        if hasattr(self.data, "_repr_html_"):
             self._repr_html_ = self.data._repr_html_
-    
+
     @abstractclassmethod
     def from_netcdf(cls):
         """Reads a netcdf file and returns subclass of Swath."""
@@ -39,10 +47,10 @@ class Swath:
 
     # ASSUME: Latitude and longitude are ordered from first to last
     def _get_swath(self):
-        """ Returns the swath of the satellite. """
-        first_left  = float(self.lons[0,0]),   float(self.lats[0,0])
-        first_right = float(self.lons[0,-1]),  float(self.lats[0,-1])
-        last_left   = float(self.lons[-1,0]),  float(self.lats[-1,0])
-        last_right  = float(self.lons[-1,-1]), float(self.lats[-1,-1])
+        """Returns the swath of the satellite."""
+        first_left = float(self.lons[0, 0]), float(self.lats[0, 0])
+        first_right = float(self.lons[0, -1]), float(self.lats[0, -1])
+        last_left = float(self.lons[-1, 0]), float(self.lats[-1, 0])
+        last_right = float(self.lons[-1, -1]), float(self.lats[-1, -1])
         coordinate_seq = [last_left, last_right, first_right, first_left, first_left]
         return Polygon(coordinate_seq)
