@@ -3,19 +3,19 @@ from pathlib import Path
 
 import xarray as xr
 
-from aerichor.satellite.base import Swath
+from aerichor.satellite.base import Satellite
 
 
 PACE_ELEVATION = 6_765_000  # meters
 
 
-class SPEXOne(Swath):
+class SPEXOne(Satellite):
     def __init__(self, **kwargs):
         super().__init__(elevation=PACE_ELEVATION, **kwargs)
 
     @classmethod
     def from_netcdf(cls, file):
-        """Create Swath from PACE_SPEXONE.*.L2.RTAP_LD.V3_0.nc file."""
+        """Create Satellite from PACE_SPEXONE.*.L2.RTAP_LD.V3_0.nc file."""
         origin = file
         data = xr.open_datatree(file, decode_timedelta=False)
         lats = data["geolocation_data"]["latitude"]
