@@ -6,12 +6,13 @@ This is a Python utility library for analysing geospatial aerosol data.
 
 You know that earthy smell right after it starts raining? That's called
 petrichor, which comes from two distinct Greek word roots. The "petr-" part
-means stone. Ichor, is the mythical blood of the gods. So "petrichor" is roughly
-"the god-blood of the stone."
+means stone. "Ichor", on the other hand, is the mythical blood of the gods. So
+"petrichor" is roughly "the god-blood of the stone." Aerichor then, is "the
+god-blood of the air." In other words, I just thought it was a cool name.
 
 # API Example
 
-```python
+``` python
 from shapely import Point
 import aerichor.satellite.pace as pace
 spex=pace.SPEXOne.from_netcdf("tests/data/PACE_SPEXONE.20240324T174414.L2.RTAP_LD.V3_0.nc")
