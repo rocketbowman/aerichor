@@ -7,6 +7,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "cartopy>=0.24.1",
+    "earthaccess>=0.14.0",
     "matplotlib>=3.10.3",
     "netcdf4>=1.7.2",
     "numpy>=2.3.1",
