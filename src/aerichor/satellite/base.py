@@ -5,25 +5,78 @@ from shapely import Polygon
 import matplotlib.pyplot as plt
 
 from aerichor.utils import BoundingBox
+from aerichor.dataframe import SampleDataFrame
 
 
 class Swath:
-    def __init__(self, lats, lons, elevation):
-        """Swaths define the geometric properties of the satellite pass."""
-        self.lats = lats
-        self.lons = lons
-        self.elevation = elevation
+    @property
+    def lats(self):
+        return self._lats
 
-        # ASSUME: Latitude and longitude are ordered from first to last
-        first_left = float(lons[0, 0]), float(lats[0, 0])
-        first_right = float(lons[0, -1]), float(lats[0, -1])
-        last_left = float(lons[-1, 0]), float(lats[-1, 0])
-        last_right = float(lons[-1, -1]), float(lats[-1, -1])
-        coordinate_seq = [last_left, last_right, first_right, first_left, first_left]
+    @lats.setter
+    def lats(self, lats):
+        if not hasattr(lats, "min") or not hasattr(lats, "max"):
+            raise TypeError(f"{type(lats)} does not have a min() or max() method.")
+        self._lats = lats
 
-        self.shape = Polygon(coordinate_seq)
-        self.bbox = BoundingBox.from_shape(self.shape)
-        self.projection = self._get_projection()
+    @property
+    def lons(self):
+        return self._lons
+
+    @lons.setter
+    def lons(self, lons):
+        if not hasattr(lons, "min") or not hasattr(lons, "max"):
+            raise TypeError(f"{type(lons)} does not have a min() or max() method.")
+        self._lons = lons
+
+    @property
+    def elevation(self):
+        return self._elevation
+
+    @elevation.setter
+    def elevation(self, elevation):
+        self._elevation = elevation
+
+    @property
+    def start(self):
+        return self._start
+
+    @start.setter
+    def start(self, start):
+        self._start = start
+
+    @property
+    def end(self):
+        return self._end
+
+    @end.setter
+    def end(self, end):
+        self._end = end
+
+    # TODO: This assumes lats and lons are 2D - not always true
+    @property
+    def shape(self):
+        if not hasattr(self, "._shape") or not self._shape:
+            # ASSUME: Latitude and longitude are ordered from first to last
+            first_left = float(self.lons[0, 0]), float(self.lats[0, 0])
+            first_right = float(self.lons[0, -1]), float(self.lats[0, -1])
+            last_left = float(self.lons[-1, 0]), float(self.lats[-1, 0])
+            last_right = float(self.lons[-1, -1]), float(self.lats[-1, -1])
+            coordinate_seq = [
+                last_left,
+                last_right,
+                first_right,
+                first_left,
+                first_left,
+            ]
+            self._shape = Polygon(coordinate_seq)
+        return self._shape
+
+    @property
+    def bbox(self):
+        if not hasattr(self, "._bbox") or not self._bbox:
+            self._bbox = BoundingBox.from_shape(self.shape)
+        return self._bbox
 
     def _get_projection(self):
         lon_mid = float(self.lons.min() + self.lons.max()) / 2
@@ -38,13 +91,11 @@ class Swath:
     def contains(self, other):
         return self.shape.contains(other)
 
-    def show(self):
-        # TODO: I'll actually need to process the lats and lons
-        # ALT: I can probably just plot swath.shape with the right transform
+    def show_swath(self):
         x, y = self.shape.exterior.xy
         x.reverse()
         y.reverse()
-        ax = plt.subplot(111, projection=self.projection)
+        ax = plt.subplot(111, projection=self._get_projection())
         ax.stock_img()
         ax.coastlines()
         ax.plot(x, y, marker="o", transform=ccrs.Geodetic())
@@ -53,7 +104,7 @@ class Swath:
         plt.show()
 
 
-class Satellite:
+class Satellite(Swath):
     def __init__(
         self,
         *,
@@ -65,14 +116,16 @@ class Satellite:
         start=None,
         end=None,
     ):
-        self.data = data
-        self.elevation = elevation
+        # Swath attributes
         self.lats = lats
         self.lons = lons
-        self.origin = origin
+        self.elevation = elevation
         self.start = start
         self.end = end
-        self.swath = Swath(lats, lons, elevation)
+
+        # Data Attributes
+        self.data = data
+        self.origin = origin
 
         if hasattr(self.data, "_repr_html_"):
             self._repr_html_ = self.data._repr_html_
@@ -83,8 +136,16 @@ class Satellite:
         msg = f"The from_netcdf() method has not been implemented for {cls}."
         raise NotImplementedError(msg)
 
+    # TODO: Is this a good idea for general purpose?
+    # TODO: Probably can't assume to_numpy(), but np.array or pd.Series() might be okay.
     def __getitem__(self, item):
-        return self.data[item]
+        # return self.data[item]
+        data = {
+            "latitude": self.lats.to_numpy().flatten(),
+            "longitude": self.lons.to_numpy().flatten(),
+            item: self.data[item].to_numpy().flatten(),
+        }
+        return SampleDataFrame(data)
 
     def __setitem__(self, key, value):
         self.data[key] = value

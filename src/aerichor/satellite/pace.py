@@ -9,7 +9,7 @@ from aerichor.satellite.base import Satellite
 PACE_ELEVATION = 6_765_000  # meters
 
 
-class SPEXOne(Satellite):
+class SpexOne(Satellite):
     def __init__(self, **kwargs):
         super().__init__(elevation=PACE_ELEVATION, **kwargs)
 
@@ -20,8 +20,8 @@ class SPEXOne(Satellite):
         data = xr.open_datatree(file, decode_timedelta=False)
         lats = data["geolocation_data"]["latitude"]
         lons = data["geolocation_data"]["longitude"]
-        start = SPEXOne._get_start(file)
-        end = SPEXOne._get_end(start)
+        start = SpexOne._get_start(file)
+        end = SpexOne._get_end(start)
         return cls(data=data, origin=origin, lats=lats, lons=lons, start=start, end=end)
 
     # ASSUME: The file is not renamed between being downloaded and read.
