@@ -1,3 +1,14 @@
+"""
+This module implements subclasses of Satellite that provide an interface to the
+data collected aboard the Plankton Aerosol Cloud ocean Ecosystem (PACE)
+satellite.
+
+Classes
+-------
+SpexOne
+    Defines an interface to the L2 data collected from the SPEXOne instrument
+    aboard the PACE satellite.
+"""
 from datetime import datetime, timedelta
 from pathlib import Path
 

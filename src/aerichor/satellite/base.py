@@ -1,3 +1,13 @@
+"""
+This module defines the basic interface for satellite-retrieved data.
+
+Classes
+-------
+Swath:
+    Defines the geometric properties of satellite-retrived data.
+Satellite:
+    Define the interface for subclasses.
+"""
 from abc import abstractclassmethod
 
 import cartopy.crs as ccrs
@@ -9,6 +19,7 @@ from aerichor.dataframe import SampleDataFrame
 
 
 class Swath:
+    """Contains the geometric properties of satellite-retrieved data."""
     @property
     def lats(self):
         return self._lats
@@ -54,8 +65,10 @@ class Swath:
         self._end = end
 
     # TODO: This assumes lats and lons are 2D - not always true
+    # Better: coords = [Point(*coord) for coord in zip(latitude, longitude)]
     @property
     def shape(self):
+        """Returns the shape of the swath as a shapely.Polygon."""
         if not hasattr(self, "._shape") or not self._shape:
             # ASSUME: Latitude and longitude are ordered from first to last
             first_left = float(self.lons[0, 0]), float(self.lats[0, 0])
@@ -74,6 +87,7 @@ class Swath:
 
     @property
     def bbox(self):
+        """Returns the grid-aligned bounding box of the Swath."""
         if not hasattr(self, "._bbox") or not self._bbox:
             self._bbox = BoundingBox.from_shape(self.shape)
         return self._bbox
@@ -89,9 +103,21 @@ class Swath:
         )
 
     def contains(self, other):
+        """Returns True if the other shape is within the Swath.
+        
+        Parameters
+        ----------
+        other: shapely.Shape
+            Specifies the shape to query.
+            
+        Returns
+        -------
+        bool:
+            Returns True if the other shape is within the Swath."""
         return self.shape.contains(other)
 
     def show_swath(self):
+        """Plots the area covered by the swath over the globe."""
         x, y = self.shape.exterior.xy
         x.reverse()
         y.reverse()
@@ -136,10 +162,8 @@ class Satellite(Swath):
         msg = f"The from_netcdf() method has not been implemented for {cls}."
         raise NotImplementedError(msg)
 
-    # TODO: Is this a good idea for general purpose?
     # TODO: Probably can't assume to_numpy(), but np.array or pd.Series() might be okay.
     def __getitem__(self, item):
-        # return self.data[item]
         data = {
             "latitude": self.lats.to_numpy().flatten(),
             "longitude": self.lons.to_numpy().flatten(),
