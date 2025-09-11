@@ -65,7 +65,10 @@ class Swath:
         self._end = end
 
     # TODO: This assumes lats and lons are 2D - not always true
-    # Better: coords = [Point(*coord) for coord in zip(latitude, longitude)]
+    # BETTER: coords = [Point(*coord) for coord in zip(latitude, longitude)]
+    # The problem is that SpexOne (for example) collects points by scanning
+    # left-to-right, top-to-bottom. You get a zig-zag shape when you reach 
+    # the end of one line and scan back to the beginning of the next line.
     @property
     def shape(self):
         """Returns the shape of the swath as a shapely.Polygon."""
@@ -162,14 +165,8 @@ class Satellite(Swath):
         msg = f"The from_netcdf() method has not been implemented for {cls}."
         raise NotImplementedError(msg)
 
-    # TODO: Probably can't assume to_numpy(), but np.array or pd.Series() might be okay.
     def __getitem__(self, item):
-        data = {
-            "latitude": self.lats.to_numpy().flatten(),
-            "longitude": self.lons.to_numpy().flatten(),
-            item: self.data[item].to_numpy().flatten(),
-        }
-        return SampleDataFrame(data)
+        return self.data[key]
 
     def __setitem__(self, key, value):
         self.data[key] = value

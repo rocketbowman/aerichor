@@ -33,11 +33,3 @@ def test_base_swath_contains(spex):
 
 def test_base_swath_lat_no_min():
     pass
-
-# TODO: Add this to the philosophy section of README.
-# I don't think "normal xarray stuff" should be part of the design.
-# This example uses xarray for the data attribute, but the next might not.
-# We should prefer an aerichor-specific framework for probing satellite data
-# and only fallback on the data-native when needed.
-def test_pace_normal_xarray_stuff():
-    pass

@@ -77,7 +77,6 @@ class AqsClient:
     -------
     self
     """
-    # TODO: I could make this a try netrc / fallback to signup or getpass
     def __init__(self, *, login=None, key=None):
         self.login = login
         self.key = key

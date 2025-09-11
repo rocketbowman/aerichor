@@ -45,7 +45,7 @@ characterized by a path (rather than area or points) and elevation.
 
 # Getting Started
 
-## Installation
+## TODO: Installation
 
 ## Short Example
 
@@ -93,5 +93,5 @@ main = pd.concat(dataframes,ignore_index=True)
 
 ## Extended Example
 
-For a longer example with more detailed explanation, look at the Jupyter
-notebook.
+For a longer example with more detailed explanation, look at [the Jupyter
+notebook](./notebooks/pace.ipynb).
