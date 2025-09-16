@@ -2,7 +2,7 @@
 name = "aerichor"
 version = "0.1.0"
 authors = [
-    { name = "Kyle Bowman", email = "kyle+github@rocketbowman.com" }
+    { name = "Kyle Bowman", email = "signup.rb@pm.me" }
 ]
 requires-python = ">=3.12"
 dependencies = [
